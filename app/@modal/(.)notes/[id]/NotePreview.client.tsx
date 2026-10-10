@@ -36,6 +36,9 @@ export default function NotePreviewClient() {
             </div>
           </div>
         )}
+        <button className={css.backBtn} onClick={router.back}>
+          Close
+        </button>
       </main>
     </Modal>
   );
