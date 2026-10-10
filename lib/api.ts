@@ -3,26 +3,39 @@ import type { Note, NoteFormValues } from "../types/note";
 const apiKey = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
 export interface NotesHttpResponse {
-  "notes": Note[],
-  "totalPages": number
+  notes: Note[];
+  totalPages: number;
+}
+
+interface FetchNotesParams {
+  search: string;
+  tag?: string;
+  page: number;
+  perPage: number;
 }
 
 export const fetchNotes = async (
   search: string,
-  page: number
+  tag: string,
+  page: number,
 ): Promise<NotesHttpResponse> => {
+  const params: FetchNotesParams = {
+    search,
+    perPage: 12,
+    page,
+  };
+  if (tag !== "all") {
+    params.tag = tag;
+  }
+
   const response = await axios.get<NotesHttpResponse>(
     "https://notehub-public.goit.study/api/notes",
     {
-      params: {
-        search,
-        perPage: 12,
-        page,
-      },
+      params,
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -36,9 +49,9 @@ export const createNote = async (noteData: NoteFormValues): Promise<Note> => {
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
-    }
+    },
   );
-  
+
   return response.data;
 };
 
@@ -49,7 +62,7 @@ export const deleteNote = async (noteId: string): Promise<Note> => {
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
-    }
+    },
   );
 
   return response.data;
@@ -62,7 +75,7 @@ export const fetchNoteById = async (noteId: string): Promise<Note> => {
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
-    }
+    },
   );
 
   return response.data;
